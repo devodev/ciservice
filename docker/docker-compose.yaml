@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  db:
+    container_name: db
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  ciservice:
+    container_name: ciservice
+    image: ciservice:compose
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      args:
+        - RUST_VERSION=${RUST_VERSION}
+        - ROCKET_PORT=${ROCKET_PORT}
+    environment:
+      - ROCKET_ENVIRONMENT=dev
+      - ROCKET_PORT=${ROCKET_PORT}
+      - ROCKET_DB_NAME=postgres_db
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=postgres
+    ports:
+      - "${ROCKET_PORT}:${ROCKET_PORT}"
+    volumes:
+      - ../:/home/ciuser
+    depends_on:
+      - db
+
+volumes:
+  db-data:
+    driver: local

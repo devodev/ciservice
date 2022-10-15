@@ -1,8 +1,12 @@
 use rocket::fairing::AdHoc;
 use rocket::figment::providers::Serialized;
+use rocket_sync_db_pools::{database, diesel};
 
 #[macro_use]
 extern crate rocket;
+
+#[database("postgres_db")]
+struct Database(diesel::PgConnection);
 
 #[launch]
 fn rocket() -> _ {
@@ -11,6 +15,7 @@ fn rocket() -> _ {
 
     rocket::custom(figment)
         .attach(AdHoc::config::<ciservice::Config>())
+        .attach(Database::fairing())
         .mount(
             "/",
             routes![
