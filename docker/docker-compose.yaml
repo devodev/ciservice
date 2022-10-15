@@ -8,6 +8,8 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
 
@@ -30,8 +32,6 @@ services:
       - DATABASE_PASSWORD=postgres
     ports:
       - "${ROCKET_PORT}:${ROCKET_PORT}"
-    volumes:
-      - ../:/home/ciuser
     depends_on:
       - db
 

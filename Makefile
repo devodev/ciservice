@@ -20,8 +20,11 @@ build:  ## Build ciservice docker image
 		.
 
 .PHONY: cli
-cli: build  ## Start a shell inside the ciservice container
-	@docker run --rm -it $(IMAGE):$(VERSION) bash
+cli: build  ## Start a shell inside a new ciservice container and mounts the cwd in the ciuser home dir
+	@docker run --rm -it \
+		-v "$(ROOT_DIR):/home/ciuser" \
+		$(IMAGE):$(VERSION) \
+		bash
 
 ##@ Development
 DOCKER_COMPOSE := env RUST_VERSION=$(RUST_VERSION) ROCKET_PORT=$(PORT) docker compose -f $(ROOT_DIR)/docker/docker-compose.yaml
@@ -33,6 +36,14 @@ start:  ## Launch dev cluster
 .PHONY: stop
 stop:  ## Stop dev cluster
 	@$(DOCKER_COMPOSE) stop
+
+.PHONY: restart
+restart:  ## Stop and start dev cluster
+	@$(DOCKER_COMPOSE) restart
+
+.PHONY: cluster-cli
+cluster-cli:  ## Start a shell inside the ciservice container of the running cluster
+	@docker exec -it ciservice bash
 
 .PHONY: down
 down:  ## Destroy dev cluster (also removes volumes)
@@ -48,10 +59,18 @@ gen-secret:  ## Generate a new secret key
 	@openssl rand -base64 32
 
 .PHONY: print-%
-print-%:  ## Print a MAKEFILE var
+print-%:  ## Print a Makefile var
 	@echo $($*)
 
 .PHONY: help
 help:  ## Display this help
-	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage: make \033[36m<target>\033[0m\n"} /^[$$()% a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
-
+	@awk 'BEGIN { \
+		FS = ":.*##"; printf "\nUSAGE: make \033[36m<target>\033[0m\n\nThis Makefile provides commands and common helpers useful to work with the ciservice stack\n" \
+	} \
+	/^[$$()% a-zA-Z_-]+:.*?##/ { \
+		printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 \
+	} \
+	/^##@/ { \
+		printf "\n\033[1m%s\033[0m\n", substr($$0, 5) \
+	} \
+	' $(MAKEFILE_LIST)

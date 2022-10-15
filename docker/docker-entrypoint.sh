@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+set -u
 
 # used to compute db url
 DATABASE_USER="${DATABASE_USER:-"postgres"}"
@@ -14,6 +15,9 @@ ROCKET_DB_NAME="${ROCKET_DB_NAME:-"postgres_db"}"
 export DATABASE_URL="${DATABASE_URL:-"postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}"}"
 # used by rocket to provide db url
 export ROCKET_DATABASES="${ROCKET_DATABASES:-"{${ROCKET_DB_NAME}={url=\"${DATABASE_URL}\"}}"}"
+
+# This .env file allows diesel to resolve the running database when using docker exec.
+echo "DATABASE_URL=${DATABASE_URL}" > .env
 
 if [ "$1" = "ciservice" ]; then
     echo "[entrypoint] waiting for db to be ready or bail out after max retries"
