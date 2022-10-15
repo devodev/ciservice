@@ -1,0 +1,14 @@
+## defaults for _all_ profiles
+[default]
+address = "0.0.0.0"
+port = 8000
+limits = { form = "64 kB", json = "1 MiB" }
+
+## set only when compiled in debug mode, i.e, `cargo build`
+[debug]
+log_level = "debug"
+## secret_key is regenerated from a random value if not set in “debug” mode only.
+secret_key = "thisisastrongsecretkey"
+
+## set only when compiled in release mode, i.e, `cargo build --release`
+[release]
