@@ -16,3 +16,9 @@ pub struct Job {
 pub(crate) struct NewJob<'a> {
     pub name: &'a str,
 }
+
+#[derive(AsChangeset)]
+#[table_name = "job"]
+pub(crate) struct UpdateJob<'a> {
+    pub name: &'a str,
+}

@@ -9,7 +9,7 @@ pub(crate) fn stage() -> AdHoc {
     AdHoc::on_ignite("Api routes", |rocket| async {
         rocket.mount(
             "/api",
-            routes![job::create, job::list, job::delete, job::get],
+            routes![job::create, job::list, job::get, job::update, job::delete],
         )
     })
 }

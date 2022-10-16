@@ -38,6 +38,30 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    put:
+      summary: Update a job
+      requestBody:
+        description: Job data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateJob'
+      responses:
+        '200':
+          description: Successfully updated
+        404:
+          description: No job found for the provided `jobId`
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
     delete:
       summary: Delete a job
       responses:
@@ -121,6 +145,7 @@ components:
       description: The unique identifier of a job
       type: integer
     Job:
+      description: The Job object
       type: object
       required:
         - id
@@ -135,6 +160,15 @@ components:
           type: string
           format: date-time
     CreateJob:
+      description: The object used to create a new Job
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+    UpdateJob:
+      description: The object used to update an existing Job
       type: object
       required:
         - name

@@ -19,8 +19,8 @@ pub(crate) struct CreateRequest {
 
 #[post("/jobs", format = "json", data = "<new_job>")]
 pub(crate) async fn create<'a>(
-    new_job: Json<CreateRequest>,
     db: Database,
+    new_job: Json<CreateRequest>,
 ) -> Result<Created<Json<Job>>> {
     let new_job = new_job.into_inner();
 
@@ -60,6 +60,32 @@ pub(crate) async fn list(db: Database, params: Pagination) -> Result<Json<ListRe
 pub(crate) async fn get(db: Database, id: i32) -> Result<Json<Job>> {
     let job = db
         .run(move |c| database::jobs::get(c, id))
+        .await
+        .map_err(|e| Errors::DatabaseError(e.0))?;
+
+    Ok(Json(job))
+}
+
+#[derive(Deserialize, Validate)]
+pub(crate) struct UpdateRequest {
+    #[validate(length(min = 1))]
+    name: Option<String>,
+}
+
+#[put("/jobs/<id>", format = "json", data = "<update_job>")]
+pub(crate) async fn update(
+    db: Database,
+    update_job: Json<UpdateRequest>,
+    id: i32,
+) -> Result<Json<Job>> {
+    let update_job = update_job.into_inner();
+
+    let mut validator = FieldValidator::validate(&update_job);
+    let name = validator.extract("name", update_job.name);
+    validator.check()?;
+
+    let job = db
+        .run(move |c| database::jobs::update(c, id, &name))
         .await
         .map_err(|e| Errors::DatabaseError(e.0))?;
 

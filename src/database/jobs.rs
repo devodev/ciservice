@@ -2,7 +2,7 @@ use diesel::prelude::*;
 use diesel::result::Error;
 use rocket::response::Debug;
 
-use crate::models::job::{Job, NewJob};
+use crate::models::job::{Job, NewJob, UpdateJob};
 use crate::schema::job;
 
 use super::pagination::{Paginate, PaginatedQueryResult};
@@ -12,10 +12,20 @@ type Result<T, E = Debug<diesel::result::Error>> = std::result::Result<T, E>;
 
 pub(crate) fn create(conn: &mut PgConnection, name: &str) -> Result<Job> {
     let new_job = NewJob { name };
-
     let job = diesel::insert_into(job::table)
         .values(&new_job)
         .get_result::<Job>(conn)?;
+
+    Ok(job)
+}
+
+pub(crate) fn update(conn: &mut PgConnection, id: i32, name: &str) -> Result<Job> {
+    let update_job = UpdateJob { name };
+    let job = diesel::update(job::table)
+        .filter(job::id.eq(id))
+        .set(update_job)
+        .get_result::<Job>(conn)?;
+
     Ok(job)
 }
 
