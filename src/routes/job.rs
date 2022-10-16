@@ -1,4 +1,4 @@
-use rocket::response::status::Created;
+use rocket::response::status::{Created, NoContent};
 use rocket::serde::json::Json;
 use rocket::serde::Deserialize;
 use validator::Validate;
@@ -64,4 +64,13 @@ pub(crate) async fn get(db: Database, id: i32) -> Result<Json<Job>> {
         .map_err(|e| Errors::DatabaseError(e.0))?;
 
     Ok(Json(job))
+}
+
+#[delete("/jobs/<id>")]
+pub(crate) async fn delete(db: Database, id: i32) -> Result<NoContent> {
+    db.run(move |c| database::jobs::delete(c, id))
+        .await
+        .map_err(|e| Errors::DatabaseError(e.0))?;
+
+    Ok(NoContent)
 }

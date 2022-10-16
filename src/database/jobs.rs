@@ -1,4 +1,5 @@
 use diesel::prelude::*;
+use diesel::result::Error;
 use rocket::response::Debug;
 
 use crate::models::job::{Job, NewJob};
@@ -31,7 +32,18 @@ pub(crate) fn list(
 }
 
 pub(crate) fn get(conn: &mut PgConnection, id: i32) -> Result<Job> {
-    let job = job::table.filter(job::id.eq_all(id)).first::<Job>(conn)?;
+    let job = job::table.filter(job::id.eq(id)).first::<Job>(conn)?;
 
     Ok(job)
+}
+
+pub(crate) fn delete(conn: &mut PgConnection, id: i32) -> Result<()> {
+    let affected = diesel::delete(job::table)
+        .filter(job::id.eq(id))
+        .execute(conn)?;
+
+    match affected != 0 {
+        true => Ok(()),
+        false => Err(Debug(Error::NotFound)),
+    }
 }

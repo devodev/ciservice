@@ -38,6 +38,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    delete:
+      summary: Delete a job
+      responses:
+        '204':
+          description: Successfully deleted
+        404:
+          description: No job found for the provided `jobId`
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /jobs:
     get:
       summary: List jobs
@@ -127,20 +144,42 @@ components:
     ArrayOfJobs:
       type: object
       required:
-        - jobs
+        - results
+        - limit
+        - page
         - count
+        - total
       properties:
-        jobs:
+        results:
           type: array
           items:
             $ref: '#/components/schemas/Job'
+        limit:
+          type: integer
+        page:
+          type: integer
         count:
+          type: integer
+        total:
           type: integer
     Error:
       type: object
       required:
-        - message
+        - status
+        - reason
+        - uri
+        - timestamp
       properties:
-        errors:
-          description: A human readable error message
+        status:
+          description: The HTTP status code
+          type: integer
+        reason:
+          description: A human readable status mesage
           type: string
+        uri:
+          description: The request URI that caused the error
+          type: string
+        timestamp:
+          description: The timestamp of when the error occured
+          type: string
+          format: date-time
