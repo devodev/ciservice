@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "7c04b136-7d5d-467f-9127-29a742c32c7d",
+		"_postman_id": "ec6dc776-73a1-4697-aa0f-37423571b18c",
 		"name": "ciservice",
 		"description": "ciservice api",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
@@ -10,6 +10,459 @@
 		{
 			"name": "jobs",
 			"item": [
+				{
+					"name": "{job Id}",
+					"item": [
+						{
+							"name": "Read a job",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/jobs/:jobId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"jobs",
+										":jobId"
+									],
+									"variable": [
+										{
+											"key": "jobId",
+											"value": "-62573186",
+											"description": "(Required) The unique identifier of the job"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "The job corresponding to the provided `jobId`",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/jobs/:jobId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"jobs",
+												":jobId"
+											],
+											"variable": [
+												{
+													"key": "jobId",
+													"value": "-62573186",
+													"description": "(Required) The unique identifier of the job"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"id\": \"<integer>\",\n  \"name\": \"consequat eiusmod\",\n  \"created_at\": \"2002-03-14T11:02:39.295Z\",\n  \"updated_at\": \"1999-06-05T15:23:36.308Z\"\n}"
+								},
+								{
+									"name": "No job found for the provided `jobId`",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/jobs/:jobId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"jobs",
+												":jobId"
+											],
+											"variable": [
+												{
+													"key": "jobId",
+													"value": "-62573186",
+													"description": "(Required) The unique identifier of the job"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"status\": -23603849,\n  \"reason\": \"in velit\",\n  \"method\": \"ut esse\",\n  \"uri\": \"ex aliqua\",\n  \"timestamp\": \"2018-02-15T23:33:46.309Z\"\n}"
+								},
+								{
+									"name": "Unexpected error",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/jobs/:jobId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"jobs",
+												":jobId"
+											],
+											"variable": [
+												{
+													"key": "jobId",
+													"value": "-62573186",
+													"description": "(Required) The unique identifier of the job"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"status\": -23603849,\n  \"reason\": \"in velit\",\n  \"method\": \"ut esse\",\n  \"uri\": \"ex aliqua\",\n  \"timestamp\": \"2018-02-15T23:33:46.309Z\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Update a job",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"nisi\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/jobs/:jobId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"jobs",
+										":jobId"
+									],
+									"variable": [
+										{
+											"key": "jobId",
+											"value": "<integer>",
+											"description": "(Required) The unique identifier of the job"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Successfully updated",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"nisi\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/jobs/:jobId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"jobs",
+												":jobId"
+											],
+											"variable": [
+												{
+													"key": "jobId",
+													"value": "<integer>",
+													"description": "(Required) The unique identifier of the job"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "No job found for the provided `jobId`",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"nisi\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/jobs/:jobId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"jobs",
+												":jobId"
+											],
+											"variable": [
+												{
+													"key": "jobId",
+													"value": "<integer>",
+													"description": "(Required) The unique identifier of the job"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"status\": -23603849,\n  \"reason\": \"in velit\",\n  \"method\": \"ut esse\",\n  \"uri\": \"ex aliqua\",\n  \"timestamp\": \"2018-02-15T23:33:46.309Z\"\n}"
+								},
+								{
+									"name": "Unexpected error",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"name\": \"nisi\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{baseUrl}}/jobs/:jobId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"jobs",
+												":jobId"
+											],
+											"variable": [
+												{
+													"key": "jobId",
+													"value": "<integer>",
+													"description": "(Required) The unique identifier of the job"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"status\": -23603849,\n  \"reason\": \"in velit\",\n  \"method\": \"ut esse\",\n  \"uri\": \"ex aliqua\",\n  \"timestamp\": \"2018-02-15T23:33:46.309Z\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Delete a job",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{baseUrl}}/jobs/:jobId",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"jobs",
+										":jobId"
+									],
+									"variable": [
+										{
+											"key": "jobId",
+											"value": "<integer>",
+											"description": "(Required) The unique identifier of the job"
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Successfully deleted",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/jobs/:jobId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"jobs",
+												":jobId"
+											],
+											"variable": [
+												{
+													"key": "jobId",
+													"value": "<integer>",
+													"description": "(Required) The unique identifier of the job"
+												}
+											]
+										}
+									},
+									"status": "No Content",
+									"code": 204,
+									"_postman_previewlanguage": "text",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "text/plain"
+										}
+									],
+									"cookie": [],
+									"body": ""
+								},
+								{
+									"name": "No job found for the provided `jobId`",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/jobs/:jobId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"jobs",
+												":jobId"
+											],
+											"variable": [
+												{
+													"key": "jobId",
+													"value": "<integer>",
+													"description": "(Required) The unique identifier of the job"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"status\": -23603849,\n  \"reason\": \"in velit\",\n  \"method\": \"ut esse\",\n  \"uri\": \"ex aliqua\",\n  \"timestamp\": \"2018-02-15T23:33:46.309Z\"\n}"
+								},
+								{
+									"name": "Unexpected error",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{baseUrl}}/jobs/:jobId",
+											"host": [
+												"{{baseUrl}}"
+											],
+											"path": [
+												"jobs",
+												":jobId"
+											],
+											"variable": [
+												{
+													"key": "jobId",
+													"value": "<integer>",
+													"description": "(Required) The unique identifier of the job"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										}
+									],
+									"cookie": [],
+									"body": "{\n  \"status\": -23603849,\n  \"reason\": \"in velit\",\n  \"method\": \"ut esse\",\n  \"uri\": \"ex aliqua\",\n  \"timestamp\": \"2018-02-15T23:33:46.309Z\"\n}"
+								}
+							]
+						}
+					]
+				},
 				{
 					"name": "List jobs",
 					"request": {
@@ -21,12 +474,24 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/jobs",
+							"raw": "{{baseUrl}}/jobs?page=0&limit=20",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"jobs"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0",
+									"description": "The number of pages to skip before starting to collect the result set"
+								},
+								{
+									"key": "limit",
+									"value": "20",
+									"description": "The numbers of items to return"
+								}
 							]
 						}
 					},
@@ -37,12 +502,22 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/jobs",
+									"raw": "{{baseUrl}}/jobs?page=0&limit=20",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"jobs"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										}
 									]
 								}
 							},
@@ -56,7 +531,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n  \"jobs\": [\n    {\n      \"id\": -91319438,\n      \"name\": \"incididunt aute\",\n      \"created_at\": \"1982-04-27T20:50:34.862Z\"\n    },\n    {\n      \"id\": 34857472,\n      \"name\": \"enim anim\",\n      \"created_at\": \"1994-04-25T08:34:58.505Z\"\n    }\n  ],\n  \"count\": -77785844\n}"
+							"body": "{\n  \"results\": [\n    {\n      \"id\": 74184281,\n      \"name\": \"est consectetur laboris Duis\",\n      \"created_at\": \"1943-05-23T02:51:38.726Z\",\n      \"updated_at\": \"1951-11-22T16:02:03.075Z\"\n    },\n    {\n      \"id\": -90728021,\n      \"name\": \"amet ut\",\n      \"created_at\": \"1955-04-01T13:38:18.859Z\",\n      \"updated_at\": \"1948-05-10T15:27:36.194Z\"\n    }\n  ],\n  \"limit\": 19851770,\n  \"page\": 9279969,\n  \"count\": -24757953,\n  \"total\": 22737666\n}"
 						},
 						{
 							"name": "Unexpected error",
@@ -64,12 +539,22 @@
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{baseUrl}}/jobs",
+									"raw": "{{baseUrl}}/jobs?page=0&limit=20",
 									"host": [
 										"{{baseUrl}}"
 									],
 									"path": [
 										"jobs"
+									],
+									"query": [
+										{
+											"key": "page",
+											"value": "0"
+										},
+										{
+											"key": "limit",
+											"value": "20"
+										}
 									]
 								}
 							},
@@ -83,7 +568,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n  \"errors\": \"dolore ad Lorem\"\n}"
+							"body": "{\n  \"status\": -23603849,\n  \"reason\": \"in velit\",\n  \"method\": \"ut esse\",\n  \"uri\": \"ex aliqua\",\n  \"timestamp\": \"2018-02-15T23:33:46.309Z\"\n}"
 						}
 					]
 				},
@@ -103,7 +588,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"name\": \"Lorem sit\"\n}",
+							"raw": "{\n  \"name\": \"id dolor\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -128,7 +613,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"Lorem sit\"\n}",
+									"raw": "{\n  \"name\": \"id dolor\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -155,7 +640,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n  \"id\": 94571388,\n  \"name\": \"aliquip dolor\",\n  \"created_at\": \"1943-02-09T00:35:22.355Z\"\n}"
+							"body": "{\n  \"id\": 73624046,\n  \"name\": \"ad nostrud\",\n  \"created_at\": \"2008-12-06T23:33:12.333Z\",\n  \"updated_at\": \"1995-01-13T13:48:09.222Z\"\n}"
 						},
 						{
 							"name": "Unexpected error",
@@ -164,7 +649,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"name\": \"Lorem sit\"\n}",
+									"raw": "{\n  \"name\": \"id dolor\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -191,143 +676,7 @@
 								}
 							],
 							"cookie": [],
-							"body": "{\n  \"errors\": \"dolore ad Lorem\"\n}"
-						}
-					]
-				},
-				{
-					"name": "Read a job",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/jobs/:jobId",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"jobs",
-								":jobId"
-							],
-							"variable": [
-								{
-									"key": "jobId",
-									"value": "60365058",
-									"description": "(Required) The unique identifier of the job"
-								}
-							]
-						}
-					},
-					"response": [
-						{
-							"name": "The job corresponding to the provided `jobId`",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/jobs/:jobId",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"jobs",
-										":jobId"
-									],
-									"variable": [
-										{
-											"key": "jobId",
-											"value": "60365058",
-											"description": "(Required) The unique identifier of the job"
-										}
-									]
-								}
-							},
-							"status": "OK",
-							"code": 200,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								}
-							],
-							"cookie": [],
-							"body": "{\n  \"id\": \"<integer>\",\n  \"name\": \"sed\",\n  \"created_at\": \"1988-04-08T23:27:09.624Z\"\n}"
-						},
-						{
-							"name": "No job found for the provided `jobId`",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/jobs/:jobId",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"jobs",
-										":jobId"
-									],
-									"variable": [
-										{
-											"key": "jobId",
-											"value": "60365058",
-											"description": "(Required) The unique identifier of the job"
-										}
-									]
-								}
-							},
-							"status": "Not Found",
-							"code": 404,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								}
-							],
-							"cookie": [],
-							"body": "{\n  \"errors\": \"dolore ad Lorem\"\n}"
-						},
-						{
-							"name": "Unexpected error",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{baseUrl}}/jobs/:jobId",
-									"host": [
-										"{{baseUrl}}"
-									],
-									"path": [
-										"jobs",
-										":jobId"
-									],
-									"variable": [
-										{
-											"key": "jobId",
-											"value": "60365058",
-											"description": "(Required) The unique identifier of the job"
-										}
-									]
-								}
-							},
-							"status": "Internal Server Error",
-							"code": 500,
-							"_postman_previewlanguage": "json",
-							"header": [
-								{
-									"key": "Content-Type",
-									"value": "application/json"
-								}
-							],
-							"cookie": [],
-							"body": "{\n  \"errors\": \"dolore ad Lorem\"\n}"
+							"body": "{\n  \"status\": -23603849,\n  \"reason\": \"in velit\",\n  \"method\": \"ut esse\",\n  \"uri\": \"ex aliqua\",\n  \"timestamp\": \"2018-02-15T23:33:46.309Z\"\n}"
 						}
 					]
 				}

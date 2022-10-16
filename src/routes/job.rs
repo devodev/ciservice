@@ -1,3 +1,4 @@
+use rocket::fairing::AdHoc;
 use rocket::response::status::{Created, NoContent};
 use rocket::serde::json::Json;
 use rocket::serde::{Deserialize, Serialize};
@@ -17,7 +18,7 @@ pub(crate) struct CreateRequest {
     name: String,
 }
 
-#[post("/jobs", format = "json", data = "<new_job>")]
+#[post("/", format = "json", data = "<new_job>")]
 pub(crate) async fn create<'a>(
     db: Database,
     new_job: Validated<Json<CreateRequest>>,
@@ -29,11 +30,11 @@ pub(crate) async fn create<'a>(
         .await
         .map_err(|e| Error::DatabaseError(e.0))?;
 
-    let created_location = format!("/jobs/{}", job.id);
+    let created_location = format!("/{}", job.id);
     Ok(Created::new(created_location).tagged_body(Json(job)))
 }
 
-#[get("/jobs?<params..>", format = "json")]
+#[get("/?<params..>", format = "json")]
 pub(crate) async fn list(db: Database, params: Pagination) -> Result<Json<ListResponse<Job>>> {
     let paginated_jobs = db
         .run(move |c| database::jobs::list(c, &params.into()))
@@ -52,7 +53,7 @@ pub(crate) async fn list(db: Database, params: Pagination) -> Result<Json<ListRe
     }))
 }
 
-#[get("/jobs/<id>", format = "json")]
+#[get("/<id>", format = "json")]
 pub(crate) async fn get(db: Database, id: i32) -> Result<Json<Job>> {
     let job = db
         .run(move |c| database::jobs::get(c, id))
@@ -68,7 +69,7 @@ pub(crate) struct UpdateRequest {
     name: String,
 }
 
-#[put("/jobs/<id>", format = "json", data = "<update_job>")]
+#[put("/<id>", format = "json", data = "<update_job>")]
 pub(crate) async fn update(
     db: Database,
     update_job: Validated<Json<UpdateRequest>>,
@@ -84,11 +85,17 @@ pub(crate) async fn update(
     Ok(Json(job))
 }
 
-#[delete("/jobs/<id>")]
+#[delete("/<id>")]
 pub(crate) async fn delete(db: Database, id: i32) -> Result<NoContent> {
     db.run(move |c| database::jobs::delete(c, id))
         .await
         .map_err(|e| Error::DatabaseError(e.0))?;
 
     Ok(NoContent)
+}
+
+pub(crate) fn stage() -> AdHoc {
+    AdHoc::on_ignite("Jobs routes", |rocket| async {
+        rocket.mount("/api/jobs", routes![create, list, get, update, delete])
+    })
 }

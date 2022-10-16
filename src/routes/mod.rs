@@ -6,12 +6,7 @@ use crate::database::PaginatedParams;
 pub(crate) mod job;
 
 pub(crate) fn stage() -> AdHoc {
-    AdHoc::on_ignite("Api routes", |rocket| async {
-        rocket.mount(
-            "/api",
-            routes![job::create, job::list, job::get, job::update, job::delete],
-        )
-    })
+    AdHoc::on_ignite("Api routes", |rocket| async { rocket.attach(job::stage()) })
 }
 
 #[derive(FromForm, Default)]

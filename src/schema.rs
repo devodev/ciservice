@@ -5,5 +5,6 @@ diesel::table! {
         id -> Int4,
         name -> Text,
         created_at -> Timestamp,
+        updated_at -> Timestamp,
     }
 }

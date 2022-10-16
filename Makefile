@@ -38,8 +38,7 @@ stop:  ## Stop dev cluster (keeps container and networks around)
 	@$(DOCKER_COMPOSE) stop
 
 .PHONY: restart
-restart:  ## Restart dev cluster
-	@$(DOCKER_COMPOSE) restart
+restart: down start  ## Restart dev cluster
 
 .PHONY: cluster-cli
 cluster-cli:  ## Start a shell inside the ciservice container of the running cluster
