@@ -1,5 +1,5 @@
 use rocket::fairing::AdHoc;
-use serde::Serialize;
+use rocket::serde::Serialize;
 
 use crate::database::PaginatedParams;
 

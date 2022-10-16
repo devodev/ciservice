@@ -201,6 +201,7 @@ components:
       required:
         - status
         - reason
+        - method
         - uri
         - timestamp
       properties:
@@ -210,10 +211,13 @@ components:
         reason:
           description: A human readable status mesage
           type: string
+        method:
+          description: The HTTP method
+          type: string
         uri:
-          description: The request URI that caused the error
+          description: The request URI
           type: string
         timestamp:
-          description: The timestamp of when the error occured
+          description: The timestamp of the error
           type: string
           format: date-time

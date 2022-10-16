@@ -1,9 +1,9 @@
 use chrono::Utc;
 use config::Config;
+use rocket::fairing::AdHoc;
 use rocket::http::Status;
 use rocket::serde::json::{json, Value};
 use rocket::Request;
-use rocket::{fairing::AdHoc, figment::providers::Serialized};
 
 #[macro_use]
 extern crate rocket;
@@ -28,11 +28,13 @@ mod schema;
 fn default_error_catcher(status: Status, req: &Request) -> Value {
     let code = status.code;
     let reason = status.reason();
+    let method = req.method();
     let uri = req.uri().to_string();
     let timestamp = Utc::now();
     json!({
         "status": code,
         "reason": reason,
+        "method": method,
         "uri": uri,
         "timestamp": timestamp
     })
@@ -40,12 +42,19 @@ fn default_error_catcher(status: Status, req: &Request) -> Value {
 
 #[launch]
 pub fn rocket() -> _ {
-    let figment = rocket::Config::figment().merge(Serialized::defaults(Config::default()));
-
-    rocket::custom(figment)
+    rocket::build()
         .attach(AdHoc::config::<Config>())
         .attach(database::stage())
         .attach(routes::stage())
         .attach(playground::stage())
+        .attach(AdHoc::on_response(
+            "Set Server header on all responses",
+            |_, resp| {
+                Box::pin(async move {
+                    resp.set_raw_header("Server", "ciservice");
+                })
+            },
+        ))
+        .register("/", catchers![rocket_validation::validation_catcher])
         .register("/", catchers![default_error_catcher])
 }

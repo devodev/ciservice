@@ -1,6 +1,6 @@
 use chrono::NaiveDateTime;
 use diesel::Queryable;
-use serde::Serialize;
+use rocket::serde::Serialize;
 
 use crate::schema::job;
 
