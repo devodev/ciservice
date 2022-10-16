@@ -27,6 +27,7 @@ FROM debian:buster-slim
 
 RUN apt-get update \
  && apt-get install -y \
+    libpq-dev \
     postgresql \
     postgresql-client \
     ca-certificates \

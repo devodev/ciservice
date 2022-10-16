@@ -6,5 +6,28 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rocket = "0.5.0-rc.2"
-rocket_sync_db_pools = { version = "0.1.0-rc.2", features = ["diesel_postgres_pool"] }
+chrono = { version = "0.4.22", features = ["serde"] }
+# must lock disel version to 1.4.8 because of rocket_sync_db_pools
+diesel = { version = "1.4.8", features = ["postgres", "chrono"] }
+rocket = { version = "0.5.0-rc.2", default-features = false, features = ["json"] }
+serde = "1.0.145"
+serde_json = "1.0.86"
+validator = { version = "0.15", features = ["derive"] }
+
+[dependencies.rocket_sync_db_pools]
+version = "0.1.0-rc.2"
+default-features = false
+features = ["diesel_postgres_pool"]
+
+[profile.dev.package."*"]
+# Build dependencies with full release optimizations in debug builds.
+# (Since they won't change often and probably do most of the heavy lifting)
+opt-level = 3
+
+[profile.dev]
+# Build the project itself with just enough optimization to smooth out the
+# most egregious of the abstractions which are only zero-cost when optimized
+opt-level = 1
+# Disable debug info in the binary to speed up builds
+# Source: https://lemmy.ml/post/50089
+debug = 0

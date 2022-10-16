@@ -34,19 +34,29 @@ start:  ## Launch dev cluster
 	@$(DOCKER_COMPOSE) up --build -d
 
 .PHONY: stop
-stop:  ## Stop dev cluster
+stop:  ## Stop dev cluster (keeps container and networks around)
 	@$(DOCKER_COMPOSE) stop
 
 .PHONY: restart
-restart:  ## Stop and start dev cluster
+restart:  ## Restart dev cluster
 	@$(DOCKER_COMPOSE) restart
 
 .PHONY: cluster-cli
 cluster-cli:  ## Start a shell inside the ciservice container of the running cluster
 	@docker exec -it ciservice bash
 
+.PHONY: diesel-migrations
+diesel-migrations:  ## Start a dev cluster, apply diesel migrations and exit
+	@$(DOCKER_COMPOSE) build
+	@$(DOCKER_COMPOSE) run --rm -v "$(ROOT_DIR):/home/ciuser" ciservice migrations
+	@$(DOCKER_COMPOSE) rm --stop --force db
+
 .PHONY: down
-down:  ## Destroy dev cluster (also removes volumes)
+down:  ## Destroy dev cluster (does not remove volumes)
+	@$(DOCKER_COMPOSE) down
+
+.PHONY: clean
+clean:  ## Removes volumes associated with dev cluster
 	@$(DOCKER_COMPOSE) down --volumes
 
 .PHONY: logs

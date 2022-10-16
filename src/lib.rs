@@ -1,53 +1,49 @@
-use std::io;
-use std::path::{Path, PathBuf};
-
-use rocket::fs::NamedFile;
-use rocket::tokio::task::spawn_blocking;
-use rocket::tokio::time::{sleep, Duration};
-use rocket::State;
+use config::Config;
+use rocket::serde::json::{json, Value};
+use rocket::{fairing::AdHoc, figment::providers::Serialized};
 
 #[macro_use]
 extern crate rocket;
 
+#[macro_use]
+extern crate rocket_sync_db_pools;
+
+#[macro_use]
+extern crate diesel;
+
 mod config;
-pub use config::Config;
+mod database;
+mod errors;
+mod guards;
+mod models;
+mod playground;
+mod routes;
+mod schema;
 
-#[get("/")]
-pub fn index() -> &'static str {
-    "Hello, world!"
+#[catch(404)]
+fn not_found() -> Value {
+    json!({
+        "status": "error",
+        "reason": "Not found"
+    })
 }
 
-#[get("/env")]
-pub fn env(config: &State<config::Config>) -> String {
-    config.environment.clone()
+#[catch(500)]
+fn internal_server_error() -> Value {
+    json!({
+        "status": "error",
+        "reason": "Internal Server Error"
+    })
 }
 
-#[get("/delay/<seconds>")]
-pub async fn delay(seconds: u64) -> String {
-    sleep(Duration::from_secs(seconds)).await;
-    format!("Waited for {} seconds", seconds)
-}
+#[launch]
+pub fn rocket() -> _ {
+    let figment = rocket::Config::figment().merge(Serialized::defaults(Config::default()));
 
-#[get("/blocking_task")]
-pub async fn blocking_task() -> io::Result<Vec<u8>> {
-    // In a real app, use rocket::fs::NamedFile or tokio::fs::File.
-    let vec = spawn_blocking(|| std::fs::read("data.txt"))
-        .await
-        .map_err(|e| io::Error::new(io::ErrorKind::Interrupted, e))??;
-
-    Ok(vec)
-}
-
-#[get("/hello/<name>/<age>/<cool>")]
-pub fn hello(name: &str, age: u8, cool: bool) -> String {
-    if cool {
-        format!("You're a cool {} year old, {}!", age, name)
-    } else {
-        format!("{}, we need to talk about your coolness.", name)
-    }
-}
-
-#[get("/<file..>")]
-pub async fn files(file: PathBuf) -> Option<NamedFile> {
-    NamedFile::open(Path::new("static/").join(file)).await.ok()
+    rocket::custom(figment)
+        .attach(AdHoc::config::<Config>())
+        .attach(database::stage())
+        .attach(routes::stage())
+        .attach(playground::stage())
+        .register("/", catchers![not_found, internal_server_error])
 }

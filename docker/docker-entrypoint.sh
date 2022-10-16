@@ -19,7 +19,7 @@ export ROCKET_DATABASES="${ROCKET_DATABASES:-"{${ROCKET_DB_NAME}={url=\"${DATABA
 # This .env file allows diesel to resolve the running database when using docker exec.
 echo "DATABASE_URL=${DATABASE_URL}" > .env
 
-if [ "$1" = "ciservice" ]; then
+function migrations {
     echo "[entrypoint] waiting for db to be ready or bail out after max retries"
     ( retries=15; while ! nc -z "${DATABASE_HOST}" "${DATABASE_PORT}"; do ((--retries)) || exit 1; sleep 1; done )
     echo "[entrypoint] db ready"
@@ -27,6 +27,15 @@ if [ "$1" = "ciservice" ]; then
     echo "[entrypoint] running migrations"
     diesel setup
     diesel migration run
+}
+
+if [ "$1" = "migrations" ]; then
+    migrations
+    exit 0
+fi
+
+if [ "$1" = "ciservice" ]; then
+    migrations
 
     echo "[entrypoint] starting ciservice"
     exec "$@"
