@@ -41,6 +41,17 @@ paths:
   /jobs:
     get:
       summary: List jobs
+      parameters:
+        - name: page
+          description: The number of pages to skip before starting to collect the result set
+          in: query
+          schema:
+            $ref: '#/components/schemas/PageParam'
+        - name: limit
+          description: The numbers of items to return
+          in: query
+          schema:
+            $ref: '#/components/schemas/LimitParam'
       responses:
         '200':
           description: The list of jobs
@@ -78,6 +89,17 @@ paths:
                 $ref: '#/components/schemas/Error'
 components:
   schemas:
+    PageParam:
+      type: integer
+      format: int64
+      # minimum: 0
+      default: 0
+    LimitParam:
+      type: integer
+      format: int64
+      # minimum: 1
+      # maximum: 100
+      default: 20
     JobId:
       description: The unique identifier of a job
       type: integer

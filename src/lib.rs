@@ -17,6 +17,7 @@ mod errors;
 mod guards;
 mod models;
 mod playground;
+mod responders;
 mod routes;
 mod schema;
 

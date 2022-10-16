@@ -1,18 +1,15 @@
 use diesel::prelude::*;
 use rocket::response::Debug;
 
-use crate::models::job::Job;
+use crate::models::job::{Job, NewJob};
 use crate::schema::job;
+
+use super::pagination::{Paginate, PaginatedQueryResult};
+use super::PaginatedParams;
 
 type Result<T, E = Debug<diesel::result::Error>> = std::result::Result<T, E>;
 
-#[derive(Insertable)]
-#[table_name = "job"]
-pub struct NewJob<'a> {
-    pub name: &'a str,
-}
-
-pub fn create(conn: &mut PgConnection, name: &str) -> Result<Job> {
+pub(crate) fn create(conn: &mut PgConnection, name: &str) -> Result<Job> {
     let new_job = NewJob { name };
 
     let job = diesel::insert_into(job::table)
@@ -21,7 +18,14 @@ pub fn create(conn: &mut PgConnection, name: &str) -> Result<Job> {
     Ok(job)
 }
 
-pub fn list(conn: &mut PgConnection) -> Result<Vec<Job>> {
-    let jobs: Vec<Job> = job::table.load(conn)?;
+pub(crate) fn list(
+    params: &PaginatedParams,
+    conn: &mut PgConnection,
+) -> Result<PaginatedQueryResult<Job>> {
+    let jobs = job::table
+        .order_by(job::id)
+        .paginate(params.page, params.limit)
+        .load_and_count(conn)?;
+
     Ok(jobs)
 }
