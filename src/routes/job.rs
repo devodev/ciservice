@@ -38,9 +38,9 @@ pub(crate) async fn create<'a>(
 }
 
 #[get("/jobs?<params..>", format = "json")]
-pub(crate) async fn list(params: Pagination, db: Database) -> Result<Json<ListResponse<Job>>> {
+pub(crate) async fn list(db: Database, params: Pagination) -> Result<Json<ListResponse<Job>>> {
     let paginated_jobs = db
-        .run(move |c| database::jobs::list(&params.into(), c))
+        .run(move |c| database::jobs::list(c, &params.into()))
         .await
         .map_err(|e| Errors::DatabaseError(e.0))?;
 
@@ -54,4 +54,14 @@ pub(crate) async fn list(params: Pagination, db: Database) -> Result<Json<ListRe
         page: paginated_jobs.page,
         total: paginated_jobs.total,
     }))
+}
+
+#[get("/jobs/<id>", format = "json")]
+pub(crate) async fn get(db: Database, id: i32) -> Result<Json<Job>> {
+    let job = db
+        .run(move |c| database::jobs::get(c, id))
+        .await
+        .map_err(|e| Errors::DatabaseError(e.0))?;
+
+    Ok(Json(job))
 }

@@ -1,5 +1,8 @@
+use chrono::Utc;
 use config::Config;
+use rocket::http::Status;
 use rocket::serde::json::{json, Value};
+use rocket::Request;
 use rocket::{fairing::AdHoc, figment::providers::Serialized};
 
 #[macro_use]
@@ -21,19 +24,17 @@ mod responders;
 mod routes;
 mod schema;
 
-#[catch(404)]
-fn not_found() -> Value {
+#[catch(default)]
+fn default_error_catcher(status: Status, req: &Request) -> Value {
+    let code = status.code;
+    let reason = status.reason();
+    let uri = req.uri().to_string();
+    let timestamp = Utc::now();
     json!({
-        "status": "error",
-        "reason": "Not found"
-    })
-}
-
-#[catch(500)]
-fn internal_server_error() -> Value {
-    json!({
-        "status": "error",
-        "reason": "Internal Server Error"
+        "status": code,
+        "reason": reason,
+        "uri": uri,
+        "timestamp": timestamp
     })
 }
 
@@ -46,5 +47,5 @@ pub fn rocket() -> _ {
         .attach(database::stage())
         .attach(routes::stage())
         .attach(playground::stage())
-        .register("/", catchers![not_found, internal_server_error])
+        .register("/", catchers![default_error_catcher])
 }

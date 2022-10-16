@@ -33,9 +33,11 @@ impl<'r> Responder<'r, 'static> for Errors {
                 )
                 .respond_to(req)
             }
-            Errors::DatabaseError(e) => {
-                (Status::InternalServerError, e.to_string()).respond_to(req)
-            }
+            Errors::DatabaseError(e) => match e {
+                diesel::result::Error::NotFound => Status::NotFound.respond_to(req),
+                // TODO: log the error but dont send to client
+                _ => (Status::InternalServerError, e.to_string()).respond_to(req),
+            },
         }
     }
 }

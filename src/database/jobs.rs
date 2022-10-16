@@ -19,8 +19,8 @@ pub(crate) fn create(conn: &mut PgConnection, name: &str) -> Result<Job> {
 }
 
 pub(crate) fn list(
-    params: &PaginatedParams,
     conn: &mut PgConnection,
+    params: &PaginatedParams,
 ) -> Result<PaginatedQueryResult<Job>> {
     let jobs = job::table
         .order_by(job::id)
@@ -28,4 +28,10 @@ pub(crate) fn list(
         .load_and_count(conn)?;
 
     Ok(jobs)
+}
+
+pub(crate) fn get(conn: &mut PgConnection, id: i32) -> Result<Job> {
+    let job = job::table.filter(job::id.eq_all(id)).first::<Job>(conn)?;
+
+    Ok(job)
 }
