@@ -1,0 +1,124 @@
+openapi: '3.0.0'
+info:
+  version: '1.0.0'
+  title: 'ciservice api'
+  description: ciservice api
+
+servers:
+  - url: http://localhost:8000/api
+    description: Local dev server
+
+paths:
+  /jobs/{jobId}:
+    parameters:
+      - name: jobId
+        description: The unique identifier of the job
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/JobId'
+    get:
+      summary: Read a job
+      responses:
+        '200':
+          description: The job corresponding to the provided `jobId`
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        404:
+          description: No job found for the provided `jobId`
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        500:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /jobs:
+    get:
+      summary: List jobs
+      responses:
+        '200':
+          description: The list of jobs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfJobs'
+        500:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a job
+      requestBody:
+        description: Job data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateJob'
+      responses:
+        '201':
+          description: Created a job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        500:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    JobId:
+      description: The unique identifier of a job
+      type: integer
+    Job:
+      type: object
+      required:
+        - id
+        - name
+        - created_at
+      properties:
+        id:
+          $ref: '#/components/schemas/JobId'
+        name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    CreateJob:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+    ArrayOfJobs:
+      type: object
+      required:
+        - jobs
+        - count
+      properties:
+        jobs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Job'
+        count:
+          type: integer
+    Error:
+      type: object
+      required:
+        - message
+      properties:
+        errors:
+          description: A human readable error message
+          type: string
