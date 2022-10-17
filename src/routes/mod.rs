@@ -3,10 +3,15 @@ use rocket::serde::Serialize;
 
 use crate::database::PaginatedParams;
 
-pub(crate) mod job;
+mod job;
+mod playground;
 
 pub(crate) fn stage() -> AdHoc {
-    AdHoc::on_ignite("Api routes", |rocket| async { rocket.attach(job::stage()) })
+    AdHoc::on_ignite("Add routes", |rocket| async {
+        rocket
+            .mount("/api/jobs", job::routes())
+            .mount("/playground", playground::routes())
+    })
 }
 
 #[derive(FromForm, Default)]

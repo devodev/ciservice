@@ -1,11 +1,10 @@
 use std::io;
 use std::path::{Path, PathBuf};
 
-use rocket::fairing::AdHoc;
 use rocket::fs::NamedFile;
 use rocket::tokio::task::spawn_blocking;
 use rocket::tokio::time::{sleep, Duration};
-use rocket::State;
+use rocket::{Route, State};
 
 use crate::config;
 
@@ -49,11 +48,6 @@ pub async fn files(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("static/").join(file)).await.ok()
 }
 
-pub fn stage() -> AdHoc {
-    AdHoc::on_ignite("playground", |rocket| async {
-        rocket.mount(
-            "/playground",
-            routes![index, env, delay, blocking_task, hello, files],
-        )
-    })
+pub(crate) fn routes() -> Vec<Route> {
+    routes![index, env, delay, blocking_task, hello, files]
 }

@@ -1,7 +1,7 @@
-use rocket::fairing::AdHoc;
 use rocket::response::status::{Created, NoContent};
 use rocket::serde::json::Json;
 use rocket::serde::{Deserialize, Serialize};
+use rocket::Route;
 use rocket_validation::{Validate, Validated};
 
 use crate::database;
@@ -94,8 +94,6 @@ pub(crate) async fn delete(db: Database, id: i32) -> Result<NoContent> {
     Ok(NoContent)
 }
 
-pub(crate) fn stage() -> AdHoc {
-    AdHoc::on_ignite("Jobs routes", |rocket| async {
-        rocket.mount("/api/jobs", routes![create, list, get, update, delete])
-    })
+pub(crate) fn routes() -> Vec<Route> {
+    routes![create, list, get, update, delete]
 }

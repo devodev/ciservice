@@ -19,7 +19,6 @@ mod database;
 mod errors;
 mod guards;
 mod models;
-mod playground;
 mod responders;
 mod routes;
 mod schema;
@@ -46,7 +45,6 @@ pub fn rocket() -> _ {
         .attach(AdHoc::config::<Config>())
         .attach(database::stage())
         .attach(routes::stage())
-        .attach(playground::stage())
         .attach(AdHoc::on_response(
             "Set Server header on all responses",
             |_, resp| {
