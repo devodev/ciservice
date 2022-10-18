@@ -2,8 +2,8 @@ use diesel::prelude::*;
 use diesel::result::Error;
 use rocket::response::Debug;
 
-use crate::models::job::{Job, NewJob, UpdateJob};
-use crate::schema::job;
+use crate::models::job::{Job, JobParameter, NewJob, NewJobParameter, UpdateJob};
+use crate::schema::{job, job_parameter};
 
 use super::pagination::{Paginate, PaginatedQueryResult};
 use super::PaginatedParams;
@@ -56,4 +56,33 @@ pub(crate) fn delete(conn: &mut PgConnection, id: i32) -> Result<()> {
         true => Ok(()),
         false => Err(Debug(Error::NotFound)),
     }
+}
+
+pub(crate) fn create_parameter(
+    conn: &mut PgConnection,
+    job_id: i32,
+    name: &str,
+    value: &str,
+    r#type: &str,
+) -> Result<JobParameter> {
+    let new_job_parameter = NewJobParameter {
+        job_id,
+        name,
+        value,
+        r#type,
+    };
+    let job = diesel::insert_into(job_parameter::table)
+        .values(&new_job_parameter)
+        .get_result::<JobParameter>(conn)?;
+
+    Ok(job)
+}
+
+pub(crate) fn list_parameters(conn: &mut PgConnection, job_id: i32) -> Result<Vec<JobParameter>> {
+    let job = job::table.filter(job::id.eq(job_id)).first::<Job>(conn)?;
+    let parameters = JobParameter::belonging_to(&job)
+        .order_by(job_parameter::id)
+        .load(conn)?;
+
+    Ok(parameters)
 }

@@ -36,6 +36,12 @@ impl From<Pagination> for PaginatedParams {
 #[derive(Serialize)]
 pub(crate) struct ListResponse<T> {
     results: Vec<T>,
+    count: usize,
+}
+
+#[derive(Serialize)]
+pub(crate) struct ListPaginatedResponse<T> {
+    results: Vec<T>,
     limit: i64,
     page: i64,
     count: usize,

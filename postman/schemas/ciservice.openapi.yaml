@@ -9,6 +9,55 @@ servers:
     description: Local dev server
 
 paths:
+  /jobs:
+    get:
+      summary: List jobs
+      parameters:
+        - name: page
+          description: The number of pages to skip before starting to collect the result set
+          in: query
+          schema:
+            $ref: '#/components/schemas/PageParam'
+        - name: limit
+          description: The numbers of items to return
+          in: query
+          schema:
+            $ref: '#/components/schemas/LimitParam'
+      responses:
+        '200':
+          description: The list of jobs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArrayOfJobs'
+        500:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Create a job
+      requestBody:
+        description: Job data
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateJob'
+      responses:
+        '201':
+          description: Created a job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        500:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
   /jobs/{jobId}:
     parameters:
       - name: jobId
@@ -79,27 +128,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-  /jobs:
+  /jobs/{jobId}/parameters:
+    parameters:
+      - name: jobId
+        description: The unique identifier of the job
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/JobId'
     get:
-      summary: List jobs
-      parameters:
-        - name: page
-          description: The number of pages to skip before starting to collect the result set
-          in: query
-          schema:
-            $ref: '#/components/schemas/PageParam'
-        - name: limit
-          description: The numbers of items to return
-          in: query
-          schema:
-            $ref: '#/components/schemas/LimitParam'
+      summary: List job parameters
       responses:
         '200':
-          description: The list of jobs
+          description: The list of job parameters
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArrayOfJobs'
+                $ref: '#/components/schemas/ArrayOfJobParameters'
         500:
           description: Unexpected error
           content:
@@ -107,21 +152,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
     post:
-      summary: Create a job
+      summary: Create a job parameer
       requestBody:
-        description: Job data
+        description: Job Parameter data
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateJob'
+              $ref: '#/components/schemas/CreateJobParameter'
       responses:
         '201':
-          description: Created a job
+          description: Created a job parameter
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Job'
+                $ref: '#/components/schemas/JobParameter'
         500:
           description: Unexpected error
           content:
@@ -199,6 +244,56 @@ components:
         count:
           type: integer
         total:
+          type: integer
+    JobParameterId:
+      description: The unique identifier of a Parameter
+      type: integer
+    JobParameter:
+      description: The Job Parameter object
+      type: object
+      required:
+        - id
+        - name
+        - value
+        - type
+        - created_at
+      properties:
+        id:
+          $ref: '#/components/schemas/JobParameterId'
+        name:
+          type: string
+        value:
+          type: string
+        type:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    CreateJobParameter:
+      description: The object used to create a new Job Parameter
+      type: object
+      required:
+        - name
+        - value
+        - type
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        type:
+          type: string
+    ArrayOfJobParameters:
+      type: object
+      required:
+        - results
+        - count
+      properties:
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobParameter'
+        count:
           type: integer
     Error:
       type: object

@@ -7,8 +7,8 @@ use rocket_validation::{Validate, Validated};
 use crate::database;
 use crate::database::Database;
 use crate::errors::Error;
-use crate::models::job::Job;
-use crate::routes::{ListResponse, Pagination};
+use crate::models::job::{Job, JobParameter};
+use crate::routes::{ListPaginatedResponse, ListResponse, Pagination};
 
 type Result<T, E = Error> = std::result::Result<T, E>;
 
@@ -35,7 +35,10 @@ pub(crate) async fn create<'a>(
 }
 
 #[get("/?<params..>", format = "json")]
-pub(crate) async fn list(db: Database, params: Pagination) -> Result<Json<ListResponse<Job>>> {
+pub(crate) async fn list(
+    db: Database,
+    params: Pagination,
+) -> Result<Json<ListPaginatedResponse<Job>>> {
     let paginated_jobs = db
         .run(move |c| database::jobs::list(c, &params.into()))
         .await
@@ -44,7 +47,7 @@ pub(crate) async fn list(db: Database, params: Pagination) -> Result<Json<ListRe
     let results = paginated_jobs.data;
     let count = results.len();
 
-    Ok(Json(ListResponse {
+    Ok(Json(ListPaginatedResponse {
         results,
         count,
         limit: paginated_jobs.limit,
@@ -94,6 +97,65 @@ pub(crate) async fn delete(db: Database, id: i32) -> Result<NoContent> {
     Ok(NoContent)
 }
 
+#[derive(Debug, Deserialize, Serialize, Validate)]
+pub(crate) struct CreateParameterRequest {
+    #[validate(length(min = 1))]
+    name: String,
+    #[validate(length(min = 1))]
+    value: String,
+    #[validate(length(min = 1))]
+    r#type: String,
+}
+
+#[post("/<job_id>/parameters", format = "json", data = "<new_parameter>")]
+pub(crate) async fn create_parameter<'a>(
+    db: Database,
+    job_id: i32,
+    new_parameter: Validated<Json<CreateParameterRequest>>,
+) -> Result<Created<Json<JobParameter>>> {
+    let new_parameter = new_parameter.into_inner();
+
+    let parameter = db
+        .run(move |conn| {
+            database::jobs::create_parameter(
+                conn,
+                job_id,
+                &new_parameter.name,
+                &new_parameter.value,
+                &new_parameter.r#type,
+            )
+        })
+        .await
+        .map_err(|e| Error::DatabaseError(e.0))?;
+
+    let created_location = format!("/{}", parameter.id);
+    Ok(Created::new(created_location).tagged_body(Json(parameter)))
+}
+
+#[get("/<job_id>/parameters", format = "json")]
+pub(crate) async fn list_parameters(
+    db: Database,
+    job_id: i32,
+) -> Result<Json<ListResponse<JobParameter>>> {
+    let parameters = db
+        .run(move |c| database::jobs::list_parameters(c, job_id))
+        .await
+        .map_err(|e| Error::DatabaseError(e.0))?;
+
+    let results = parameters;
+    let count = results.len();
+
+    Ok(Json(ListResponse { results, count }))
+}
+
 pub(crate) fn routes() -> Vec<Route> {
-    routes![create, list, get, update, delete]
+    routes![
+        create,
+        list,
+        get,
+        update,
+        delete,
+        create_parameter,
+        list_parameters
+    ]
 }
